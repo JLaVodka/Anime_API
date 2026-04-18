@@ -10,6 +10,19 @@ const db = new Pool({
 });
 
 const server = http.createServer(async (req, res) => {
+
+  // 🔥 CORS (ESTO ES LO QUE TE FALTABA)
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  // 🔥 Manejo de preflight (OBLIGATORIO)
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204);
+    res.end();
+    return;
+  }
+
   res.setHeader('Content-Type', 'application/json');
 
   const match = req.url.match(/^\/pokemon\/([a-zA-Z0-9]+)$/);
@@ -32,7 +45,7 @@ const server = http.createServer(async (req, res) => {
       }
 
     } catch (err) {
-      console.error(err);
+      console.error('💥 ERROR DB:', err);
       res.writeHead(500);
       res.end(JSON.stringify({ error: 'Error en la base de datos' }));
     }
@@ -46,4 +59,4 @@ const server = http.createServer(async (req, res) => {
 
 server.listen(3001, () => {
   console.log('Pokemon service corriendo en http://localhost:3001');
-}); 
+});
