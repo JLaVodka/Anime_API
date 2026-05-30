@@ -13,17 +13,18 @@ app.disable('x-powered-by');
 // MIDDLEWARES
 const allowedOrigins = process.env.ALLOWED_ORIGINS
   ? process.env.ALLOWED_ORIGINS.split(',')
-  : ['http://localhost:3000', 'http://localhost:5173', 'http://localhost:4200'];
+  : ['http://localhost:3000', 'http://localhost:8081', 'http://localhost:5173'];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) return callback(null, true); // Postman, mobile
+    if (allowedOrigins.some(o => origin.startsWith(o.trim()))) {
       callback(null, true);
     } else {
       callback(new Error('No permitido por CORS'));
     }
   },
-  methods: ['GET', 'POST', 'PUT','DELETE', 'PATCH'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true
 };
