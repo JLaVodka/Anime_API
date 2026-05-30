@@ -49,17 +49,13 @@ const authMiddleware = (
       );
 
     // GUARDAR USUARIO
-
     req.usuario = decoded;
-
     next();
 
   } catch (err) {
-
+    console.error('Auth middleware error:', err.message);
     return res.status(401).json({
-
-      error:
-        'Token inválido o expirado'
+      error: 'Token inválido o expirado'
     });
   }
 };
