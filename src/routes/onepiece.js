@@ -1,83 +1,32 @@
-const express = require('express');
-
-const router = express.Router();
-
-const db =
-  require('../db/connection');
+const createGenericRouter = require('./genericRouter');
 
 /**
  * @swagger
+ * /api/onepiece:
+ *   get:
+ *     summary: Obtener todos los personajes de One Piece
+ *     tags: [OnePiece]
+ *     responses:
+ *       200:
+ *         description: Lista de personajes
+ *       500:
+ *         description: Error en base de datos
  * /api/onepiece/{nombre}:
  *   get:
- *     summary:
- *       Obtener un personaje de One Piece
+ *     summary: Obtener un personaje de One Piece por nombre
+ *     tags: [OnePiece]
+ *     parameters:
+ *       - in: path
+ *         name: nombre
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Personaje encontrado
+ *       404:
+ *         description: Personaje no encontrado
+ *       500:
+ *         description: Error en base de datos
  */
-
-router.get('/', async (req, res) => {
-  try {
-    const result = await db.query('SELECT * FROM onepiece');
-    res.json(result.rows);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Error en base de datos' });
-  }
-});
-
-router.get('/:nombre', async (req, res) => {
-  const nombre =
-    req.params.nombre.toLowerCase();
-  try {
-    const result = await db.query(
-      'SELECT * FROM onepiece WHERE nombre = $1',
-      [nombre]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).json({
-        error: 'Personaje no encontrado'
-      });
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: 'Error en base de datos' });
-  }
-});
-
-router.get('/:nombre', async (req, res) => {
-
-  const nombre =
-    req.params.nombre.toLowerCase();
-
-  try {
-
-    const result = await db.query(
-
-      'SELECT * FROM onepiece WHERE nombre = $1',
-
-      [nombre]
-    );
-
-    if (result.rows.length === 0) {
-
-      return res.status(404).json({
-
-        error:
-          'Personaje no encontrado'
-      });
-    }
-
-    res.json(result.rows[0]);
-
-  } catch (err) {
-
-    console.log(err);
-
-    res.status(500).json({
-
-      error:
-        'Error en base de datos'
-    });
-  }
-});
-
-module.exports = router;
+module.exports = createGenericRouter('onepiece', 'Personaje');
